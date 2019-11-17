@@ -1,6 +1,5 @@
 package com.docker.one.service.impl;
 
-import com.docker.one.controller.requestdto.FootballerRequestDTO;
 import com.docker.one.model.Footballer;
 import com.docker.one.repository.IFootballerRepository;
 import com.docker.one.service.FootballerService;
