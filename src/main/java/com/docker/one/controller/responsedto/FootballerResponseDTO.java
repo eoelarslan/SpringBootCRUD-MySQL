@@ -3,10 +3,14 @@ package com.docker.one.controller.responsedto;
 /**
  * Created by ersin on 16.11.2019.
  */
+
+import org.springframework.stereotype.Component;
+
+@Component
 public class FootballerResponseDTO {
 
     private String name;
-    private String username;
+    private String surname;
 
     public String getName() {
         return name;
@@ -16,19 +20,19 @@ public class FootballerResponseDTO {
         this.name = name;
     }
 
-    public String getUsername() {
-        return username;
+    public String getSurname() {
+        return surname;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setSurname(String surname) {
+        this.surname = surname;
     }
 
     @Override
     public String toString() {
         return "FootballerResponseDTO{" +
                 "name='" + name + '\'' +
-                ", username='" + username + '\'' +
+                ", surname='" + surname + '\'' +
                 '}';
     }
 }
