@@ -30,6 +30,16 @@ public class FootballerServiceImpl extends ServiceImpl<Footballer, Long> impleme
     }
 
     @Override
+    public Footballer findBySurname(String surname) {
+        return footballerRepository.findBySurname(surname);
+    }
+
+    @Override
+    public void deleteById(Long id) {
+        footballerRepository.deleteById(id);
+    }
+
+    @Override
     public List<Footballer> findAll() {
         return super.findAll();
     }
