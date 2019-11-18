@@ -9,4 +9,5 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface IFootballerRepository extends IDataRepository<Footballer, Long> {
+    Footballer findBySurname(String surname);
 }

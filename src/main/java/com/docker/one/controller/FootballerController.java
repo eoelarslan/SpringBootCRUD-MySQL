@@ -1,6 +1,7 @@
 package com.docker.one.controller;
 
 import com.docker.one.controller.base.GenericResponseDTO;
+import com.docker.one.controller.requestdto.FootballerRequestDTO;
 import com.docker.one.controller.responsedto.FootballerResponseDTO;
 import com.docker.one.model.Footballer;
 import com.docker.one.service.FootballerService;
@@ -13,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.Optional;
 
 /**
  * Created by ersin on 16.11.2019.
@@ -40,11 +42,7 @@ public class FootballerController {
     @PostMapping("/saveFootballer")
     public ResponseEntity saveFootballer(@Valid @RequestBody Footballer footballer) {
 
-        //return ResponseEntity.ok().body(footballerService.save(footballer));
-
-
         footballerService.save(footballer);
-
         modelMapper.map(footballer, footballerResponseDTO);
 
         return ResponseEntity.ok().body(new GenericResponseDTO<>(HttpStatus.ACCEPTED,
@@ -55,5 +53,62 @@ public class FootballerController {
     public ResponseEntity getAllFootballers(){
         return ResponseEntity.ok().body(new GenericResponseDTO<>(HttpStatus.ACCEPTED,
                 messageHelper.getMessageByMessageStatus(MessageStatus.DATA_RETRIEVED, null), footballerService.findAll()));
+    }
+
+    @GetMapping("/getDetailedFootballer/bySurname/{surname}")
+    public ResponseEntity getDetailedFootballerByName(@PathVariable(value = "surname") String surname){
+        return ResponseEntity.ok().body(new GenericResponseDTO<>(HttpStatus.ACCEPTED,
+                messageHelper.getMessageByMessageStatus(MessageStatus.DATA_RETRIEVED, null), footballerService.findBySurname(surname)));
+    }
+
+    @GetMapping("/getFootballer/bySurname/{surname}")
+    public ResponseEntity getFootballerByName(@PathVariable(value = "surname") String surname){
+
+        modelMapper.map(footballerService.findBySurname(surname), footballerResponseDTO);
+
+        return ResponseEntity.ok().body(new GenericResponseDTO<>(HttpStatus.ACCEPTED,
+                messageHelper.getMessageByMessageStatus(MessageStatus.DATA_RETRIEVED, null), footballerResponseDTO));
+    }
+
+    @GetMapping("/getDetailedFootballer/byId/{id}")
+    public ResponseEntity getDetailedFootballerById(@PathVariable(value = "id") Long id){
+        return ResponseEntity.ok().body(new GenericResponseDTO<>(HttpStatus.ACCEPTED,
+                messageHelper.getMessageByMessageStatus(MessageStatus.DATA_RETRIEVED, null), footballerService.get(id)));
+    }
+
+    @GetMapping("/getFootballer/byId/{id}")
+    public ResponseEntity getFootballerById(@PathVariable(value = "id") Long id){
+
+        Optional<Footballer> footballer = footballerService.get(id);
+
+        footballerResponseDTO.setName(footballer.isPresent() ?  footballer.get().getName() : null);
+        footballerResponseDTO.setSurname(footballer.isPresent() ?  footballer.get().getSurname() : null);
+
+        return ResponseEntity.ok().body(new GenericResponseDTO<>(HttpStatus.ACCEPTED,
+                messageHelper.getMessageByMessageStatus(MessageStatus.DATA_RETRIEVED, null), footballerResponseDTO));
+    }
+
+    @PutMapping("/updateFootballer/{id}")
+    public ResponseEntity updateFootballer(@PathVariable(value = "id") Long id,
+                           @Valid @RequestBody FootballerRequestDTO footballerRequestDTO){
+
+        Optional<Footballer> footballer = footballerService.get(id);
+
+        // TODO rewrite as lambda function
+        if (footballer.isPresent()){
+            footballer.get().setWorth(footballerRequestDTO.getWorth());
+        }
+
+        return ResponseEntity.ok().body(new GenericResponseDTO<>(HttpStatus.ACCEPTED,
+                messageHelper.getMessageByMessageStatus(MessageStatus.DATA_RETRIEVED, null), footballerService.save(footballer.get())));
+    }
+
+    @DeleteMapping("/deleteFootballer/{id}")
+    public ResponseEntity deleteFootballer (@PathVariable(value = "id") Long id){
+
+        footballerService.deleteById(id);
+        return ResponseEntity.ok().body(new GenericResponseDTO<>(HttpStatus.ACCEPTED,
+                messageHelper.getMessageByMessageStatus(MessageStatus.DATA_RETRIEVED, null), null));
+
     }
 }
