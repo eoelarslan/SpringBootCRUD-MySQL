@@ -1,12 +1,14 @@
 package com.docker.one.exception;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 
 /**
- * The APIs will throw a ResourceNotFoundException whenever a User with a given id is not found in the database.
+ * The APIs will throw a ResourceValidationException whenever a request body is not valid.
  */
+@Slf4j
 @ResponseStatus(value = HttpStatus.BAD_REQUEST)
 public class ResourceValidationException extends RuntimeException{
 

@@ -15,7 +15,7 @@ public class GenericResponseDTO<T> {
     private List<T> results;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    private Object sinlgeResult;
+    private Object singleResult;
 
     public GenericResponseDTO(HttpStatus status, String message, List<T> results) {
         this.status = status;
@@ -28,14 +28,14 @@ public class GenericResponseDTO<T> {
         }
     }
 
-    public GenericResponseDTO(HttpStatus status, String message, Object sinlgeResult) {
+    public GenericResponseDTO(HttpStatus status, String message, Object singleResult) {
         this.status = status;
         this.message = message;
 
-        if (sinlgeResult != null) {
-            this.sinlgeResult = sinlgeResult;
+        if (singleResult != null) {
+            this.singleResult = singleResult;
         } else {
-            this.sinlgeResult = new ArrayList<>();
+            this.singleResult = new ArrayList<>();
         }
     }
 
@@ -63,11 +63,11 @@ public class GenericResponseDTO<T> {
         this.results = results;
     }
 
-    public Object getSinlgeResult() {
-        return sinlgeResult;
+    public Object getSingleResult() {
+        return singleResult;
     }
 
-    public void setSinlgeResult(Object sinlgeResult) {
-        this.sinlgeResult = sinlgeResult;
+    public void setSingleResult(Object singleResult) {
+        this.singleResult = singleResult;
     }
 }

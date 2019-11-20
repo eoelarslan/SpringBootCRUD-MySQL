@@ -17,6 +17,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.Optional;
 
 /**
@@ -47,6 +49,8 @@ public class FootballerController {
     @PostMapping("/saveFootballer")
     public ResponseEntity saveFootballer(@Valid @RequestBody Footballer footballer) {
 
+        log.debug("[FootballerController]: [Method] saveFootballer:\nSaved Footballer: " + footballer.toString());
+
         footballerService.save(footballer);
         modelMapper.map(footballer, footballerResponseDTO);
 
@@ -56,19 +60,26 @@ public class FootballerController {
 
     @GetMapping("/getAllFootballers")
     public ResponseEntity getAllFootballers() {
+
+        log.debug("[FootballerController]: [Method] getAllFootballers:Enter");
+
         return ResponseEntity.ok().body(new GenericResponseDTO<>(HttpStatus.ACCEPTED,
                 messageHelper.getMessageByMessageStatus(MessageStatus.DATA_RETRIEVED, null), footballerService.findAll()));
     }
 
     @GetMapping("/getDetailedFootballer/bySurname/{surname}")
-    public ResponseEntity getDetailedFootballerByName(@PathVariable(value = "surname") String surname) {
+    public ResponseEntity getDetailedFootballerBySurname(@PathVariable(value = "surname") @NotBlank String surname) {
+
+        log.debug("[FootballerController]: [Method] getDetailedFootballerBySurname:\nName: " + surname);
+
         return ResponseEntity.ok().body(new GenericResponseDTO<>(HttpStatus.ACCEPTED,
                 messageHelper.getMessageByMessageStatus(MessageStatus.DATA_RETRIEVED, null), footballerService.findBySurname(surname)));
     }
 
     @GetMapping("/getFootballer/bySurname/{surname}")
-    public ResponseEntity getFootballerByName(@PathVariable(value = "surname") String surname) {
+    public ResponseEntity getFootballerBySurname(@PathVariable(value = "surname") @NotBlank String surname) {
 
+        log.debug("[FootballerController]: [Method] getFootballerBySurname:\nName: " + surname);
         modelMapper.map(footballerService.findBySurname(surname), footballerResponseDTO);
 
         return ResponseEntity.ok().body(new GenericResponseDTO<>(HttpStatus.ACCEPTED,
@@ -76,31 +87,39 @@ public class FootballerController {
     }
 
     @GetMapping("/getDetailedFootballer/byId/{id}")
-    public ResponseEntity getDetailedFootballerById(@PathVariable(value = "id") Long id) {
+    public ResponseEntity getDetailedFootballerById(@PathVariable(value = "id") @NotNull Long id) {
+
+        log.debug("[FootballerController]: [Method] getDetailedFootballerById:\nId: " + id);
+
         return ResponseEntity.ok().body(new GenericResponseDTO<>(HttpStatus.ACCEPTED,
                 messageHelper.getMessageByMessageStatus(MessageStatus.DATA_RETRIEVED, null), footballerService.get(id)));
     }
 
     @GetMapping("/getFootballer/byId/{id}")
-    public ResponseEntity getFootballerById(@PathVariable(value = "id") Long id) {
+    public ResponseEntity getFootballerById(@PathVariable(value = "id") @NotNull Long id) {
 
+        log.debug("[FootballerController]: [Method] getFootballerById:\nId: " + id);
         Optional<Footballer> footballer = Optional.ofNullable(footballerService.get(id).orElseThrow(() -> new ResourceNotFoundException("User", "id", id)));
 
         footballerResponseDTO.setName(footballer.isPresent() ? footballer.get().getName() : null);
         footballerResponseDTO.setSurname(footballer.isPresent() ? footballer.get().getSurname() : null);
+
+        log.debug("[FootballerController]: [Method] footballerResponseDTO:" + footballerResponseDTO.toString());
 
         return ResponseEntity.ok().body(new GenericResponseDTO<>(HttpStatus.ACCEPTED,
                 messageHelper.getMessageByMessageStatus(MessageStatus.DATA_RETRIEVED, null), footballerResponseDTO));
     }
 
     @PutMapping("/updateFootballer/{id}")
-    public ResponseEntity updateFootballer(@PathVariable(value = "id") Long id,
+    public ResponseEntity updateFootballer(@PathVariable(value = "id") @NotNull Long id,
                                            @Valid @RequestBody FootballerRequestDTO footballerRequestDTO) {
 
+        log.info("[FootballerController]: [Method] updateFootballer:\nId: " + id + "\nFootballerRequestDTO: " + footballerRequestDTO.toString());
         Optional<Footballer> footballer = Optional.ofNullable(footballerService.get(id).orElseThrow(() -> new ResourceNotFoundException("User", "id", id)));
 
         // TODO rewrite as lambda function
         if (footballer.isPresent()) {
+            log.debug("[FootballerController]: [Method] updateFootballer:\nFootballer - >" + footballer.get().toString());
             footballer.get().setWorth(footballerRequestDTO.getWorth());
         }
 
@@ -109,8 +128,9 @@ public class FootballerController {
     }
 
     @DeleteMapping("/deleteFootballer/{id}")
-    public ResponseEntity deleteFootballer(@PathVariable(value = "id") Long id) {
+    public ResponseEntity deleteFootballer(@PathVariable(value = "id") @NotBlank Long id) {
 
+        log.debug("[FootballerController]: [Method] deleteFootballer:\nId: " + id);
         footballerService.deleteById(id);
         return ResponseEntity.ok().body(new GenericResponseDTO<>(HttpStatus.ACCEPTED,
                 messageHelper.getMessageByMessageStatus(MessageStatus.DATA_RETRIEVED, null), null));
